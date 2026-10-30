@@ -13,16 +13,29 @@ node bin/slugify.js Hello World   # hello-world
 
 ## Run it
 
-`example/` is a project of its own, so it must be a repo of its own for the loop to work (the branch checks, the commits and the pre-push hook all assume the repo root is the project root):
+`example/` is a folder of the ICM-DEV repository, not a repository of its own. There are two ways to run the loop on it.
+
+**In place, inside ICM-DEV** (the phase branch and the pull request go to the ICM-DEV remote). Run every command from `example/`:
+
+```
+git config icm.projectDir example
+cp scripts/git-hooks/pre-push "$(git rev-parse --git-path hooks/pre-push)"
+cp workflow/orchestrator/loaders/claude-code.md ~/.claude/commands/master.md
+claude
+```
+
+`icm.projectDir` tells the hook that the deploy-record files are under `example/docs/audit/`. Start `claude` in `example/`, as a new session, so the agents in `example/.claude/agents/` are the ones it registers. Then `/master`, `phase 2: <slug>`, `task T002: <goal>`. Phase 001 and `T001` are already recorded. The ledger's "cut from `main` at `df83222`" names a commit of the scratch repository the first run used, not one of this repository.
+
+**As a repository of its own:**
 
 ```
 cp -r example ../slugify-demo && cd ../slugify-demo
 git init -b main && git add . && git commit -m "chore: seed"
-cp scripts/git-hooks/pre-push .git/hooks/pre-push
+cp scripts/git-hooks/pre-push "$(git rev-parse --git-path hooks/pre-push)"
 npm run lint && npm test && npm run test:e2e
 ```
 
-Then copy `workflow/orchestrator/loaders/claude-code.md` to `~/.claude/commands/master.md`, start Claude Code there, and run `/master`, `phase 1: accents`, `task T001: ...`.
+Then copy `workflow/orchestrator/loaders/claude-code.md` to `~/.claude/commands/master.md`, start Claude Code there, and run `/master`. The release steps need a remote called `origin` with `main` already pushed.
 
 ## The recorded run
 

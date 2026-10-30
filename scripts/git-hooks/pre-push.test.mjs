@@ -18,6 +18,7 @@ const RECORD_FILES = [
   'docs/audit/task-ledger.md',
   'docs/audit/decisions/0001-seed.md',
 ];
+const NESTED_FILES = ['example/docs/audit/refactor-log.md', 'example/docs/audit/task-ledger.md'];
 const AGENT = { CLAUDECODE: '1' };
 const ORCHESTRATOR = { CLAUDECODE: '1', ALLOW_GIT_WRITE: '1' };
 const GUARD = 'pre-push guard:';
@@ -74,7 +75,7 @@ beforeEach(() => {
   run(['config', 'user.email', 'guard@example.invalid']);
   run(['config', 'commit.gpgsign', 'false']);
   run(['config', 'core.hooksPath', hooks]);
-  seed = commit([...RECORD_FILES, 'docs/audit/README.md', 'src/app.js'], 'chore: seed');
+  seed = commit([...RECORD_FILES, ...NESTED_FILES, 'docs/audit/README.md', 'src/app.js'], 'chore: seed');
   run(['remote', 'add', 'origin', remote]);
   run(['push', '-q', 'origin', 'main']);
   copyFileSync(HOOK, join(hooks, 'pre-push'));
@@ -210,5 +211,41 @@ describe('inside a Claude Code session', () => {
     assert.equal(push(['-u', 'origin', 'phase-1-test'], ORCHESTRATOR).status, 0);
     expectRefused(push(['origin', '--delete', 'phase-1-test'], ORCHESTRATOR));
     assert.equal(remoteRef('phase-1-test'), head);
+  });
+});
+
+describe('a project that is a folder of a larger repository', () => {
+  test('refuses a deploy record under the folder while icm.projectDir is unset', () => {
+    commit(NESTED_FILES, DEPLOY);
+    expectRefused(push(['origin', 'main']));
+    assert.equal(remoteRef('main'), seed);
+  });
+
+  test('accepts a deploy record under the folder once icm.projectDir names it', () => {
+    run(['config', 'icm.projectDir', 'example']);
+    const head = commit(NESTED_FILES, DEPLOY);
+    assert.equal(push(['origin', 'main']).status, 0);
+    assert.equal(remoteRef('main'), head);
+  });
+
+  test('accepts the folder name with a trailing slash', () => {
+    run(['config', 'icm.projectDir', 'example/']);
+    const head = commit(NESTED_FILES, DEPLOY);
+    assert.equal(push(['origin', 'main']).status, 0);
+    assert.equal(remoteRef('main'), head);
+  });
+
+  test('refuses a deploy record at the repository root once icm.projectDir is set', () => {
+    run(['config', 'icm.projectDir', 'example']);
+    commit(['docs/audit/task-ledger.md'], DEPLOY);
+    expectRefused(push(['origin', 'main']));
+    assert.equal(remoteRef('main'), seed);
+  });
+
+  test('still refuses a code file under the folder', () => {
+    run(['config', 'icm.projectDir', 'example']);
+    commit(['example/src/app.js'], DEPLOY);
+    expectRefused(push(['origin', 'main']));
+    assert.equal(remoteRef('main'), seed);
   });
 });
