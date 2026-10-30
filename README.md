@@ -36,8 +36,7 @@ you ── task ──> MASTER (orchestrator, writes no code)
 1. Copy these files into your repo: `AGENTS.md`, `CLAUDE.md`, `.claude/`, `workflow/`, `docs/`, `scripts/git-hooks/`, `.gitignore` lines, `.gitattributes`.
 2. Fill every `{{placeholder}}` (`PLACEHOLDERS.md` lists them). This must print nothing: `grep -rn "[{][{]" . --exclude-dir=.git --exclude=README.md --exclude=PLACEHOLDERS.md`.
 3. Put `main` on your remote first, then install the hook. The hook refuses to create `main`, and after it is installed `main` takes only deploy records, so do `git push -u origin main` once before the hook goes in. Then: `cp scripts/git-hooks/pre-push "$(git rev-parse --git-path hooks/pre-push)"`. If the project is a folder of a larger repository, run `git config icm.projectDir <folder>` as well, so the hook looks for the deploy-record files under that folder.
-4. Install the loader: copy `workflow/orchestrator/loaders/claude-code.md` (your filled copy) to `~/.claude/commands/master.md`.
-5. Start a **new** Claude Code session in the project folder and run `/master`. Claude Code loads `.claude/agents/` when a session starts, so a session that was already open cannot call `reviewer`, `reviewer-strict` or `builder`. Then `phase 1: my-first-phase`, then `task: <one line goal>`.
+4. Start a **new** Claude Code session in the project folder and run `/master`. It is the project command `.claude/commands/master.md`, so there is nothing to install; if an earlier version of this template told you to copy a loader to `~/.claude/commands/master.md`, delete that file. Claude Code loads `.claude/agents/` when a session starts, so a session that was already open cannot call `reviewer`, `reviewer-strict` or `builder`. Then `phase 1: my-first-phase`, then `task: <one line goal>`.
 
 Needs: Claude Code, `git`, the GitHub CLI `gh` for the release steps, Node 22 or newer for the hook test and the example.
 
@@ -54,8 +53,9 @@ Needs: Claude Code, `git`, the GitHub CLI `gh` for the release steps, Node 22 or
 ```
 AGENTS.md, CLAUDE.md          rules (layers 0 and 1)
 .claude/agents/               reviewer, reviewer-strict, builder
+.claude/commands/master.md    the /master loader (preflight and runtime notes)
 .claude/settings.json         permission rules for the unattended git and gh forms
-workflow/orchestrator/        MASTER.md, runtimes.md, loaders/
+workflow/orchestrator/        MASTER.md, runtimes.md
 workflow/stages/              01_spec, 02_build, 03_review: CONTEXT.md and output/
 docs/audit/                   ledger, refactor log, ADRs
 docs/contexts/                one file per area of the code
