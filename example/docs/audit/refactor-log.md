@@ -15,6 +15,15 @@ ADR `NNNN`. <the brief, one or two sentences>
 **Deliberately not done:** <or none>
 ```
 
+## Phase 002 - slug-limit: T002 (2026-10-30, code `<sha>`, docs `<sha>`, merged `<sha>`)
+
+ADR `0003`. `slugify` returns at most 80 characters, cut at the last hyphen at or before the limit so no word is split; a first word longer than 80 is cut at 80.
+
+**Changed:** `docs/audit/decisions/0003-cap-slug-length.md` (new ADR); `src/slugify.js` (MAX_LENGTH 80, cut at the last hyphen at or before index 80 after the slug is built); `test/slugify.test.js` (three tests for the 80-character cap); `docs/contexts/slugify.md` (Invariants line for the length rule); `docs/audit/refactor-log.md` (this entry); `docs/audit/task-ledger.md` (Phase 002 section and T002 row).
+**Verified:** npm run lint exit 0; node --test test/slugify.test.js tests 9 pass 9 fail 0; npm test tests 9 pass 9 fail 0; node --test e2e/cli.test.js tests 1 pass 1 fail 0; npm run test:e2e left to the reviewer
+**Surprises:** none.
+**Deliberately not done:** no option or CLI flag for the limit; no ellipsis or marker on a cut slug; no version bump; no `MAX_LENGTH` export.
+
 ## Phase 001 - accents: T001 (2026-10-30, code `<sha>`, docs `<sha>`, merged `<sha>`)
 
 ADR `0002`. `slugify` keeps the base letter of accented Latin letters instead of turning them into hyphens: `'Café au lait'` becomes `'cafe-au-lait'`.

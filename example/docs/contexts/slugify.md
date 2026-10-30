@@ -9,6 +9,7 @@ Read this when a task touches `src/slugify.js`, its tests or the CLI.
 ## Invariants
 
 - A slug matches `/^[a-z0-9]+(-[a-z0-9]+)*$/`, or is the empty string.
+- A slug is at most 80 characters (`MAX_LENGTH` in `src/slugify.js`). A longer one is cut at its last hyphen at or before index 80, so no word is split; a first word longer than 80 is cut at 80 characters (ADR 0003).
 - `slugify` is pure: same input, same output, no I/O, no state.
 - `slugify(slugify(x))` equals `slugify(x)`.
 
