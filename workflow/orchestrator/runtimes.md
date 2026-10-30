@@ -17,8 +17,7 @@ The split is deliberate: a cheap builder and strong reviewers. The builder does 
 
 | | |
 |---|---|
-| Loader in the repo | `workflow/orchestrator/loaders/claude-code.md` |
-| Installed at (the owner copies it by hand) | `~/.claude/commands/master.md` |
+| Loader (a project command; nothing to install) | `.claude/commands/master.md`, read from the checked-out branch |
 | Instructions | `workflow/orchestrator/MASTER.md`, read from the checked-out branch |
 | Agent calls | The Agent tool, `subagent_type` `reviewer`, `reviewer-strict` or `builder`; the final message comes back as the tool result |
 | Orchestrator tools | Claude Code's built-in tools (Bash, Read, Grep, Agent and the rest) |
@@ -38,4 +37,4 @@ What stops a wrong command beyond the agents' own instructions.
 
 ## Other runtimes
 
-An external CLI agent in a terminal pane (another vendor's coding CLI inside a terminal multiplexer such as tmux) can play the builder: the orchestrator would send it the order text and read its reply instead of calling the Agent tool. This template ships no loader for that, and none of its guards have been tested against one. If you add one, give the new builder the same stage file, the same STATUS line and the same prohibitions, put its loader in `workflow/orchestrator/loaders/`, and add its row to the tables above, because a loader may narrow `MASTER.md` and never widen it.
+An external CLI agent in a terminal pane (another vendor's coding CLI inside a terminal multiplexer such as tmux) can play the builder: the orchestrator would send it the order text and read its reply instead of calling the Agent tool. This template ships no loader for that, and none of its guards have been tested against one. If you add one, give the new builder the same stage file, the same STATUS line and the same prohibitions, put its loader where that runtime reads project commands, and add its row to the tables above, because a loader may narrow `MASTER.md` and never widen it.
