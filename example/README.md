@@ -11,6 +11,10 @@ slugify('Hello, World!'); // 'hello-world'
 node bin/slugify.js Hello World   # hello-world
 ```
 
+## Limits
+
+A slug is at most 80 characters. A longer one is cut at its last hyphen at or before the 80th character, so no word is split; if the first word alone is longer than 80 characters, it is cut at 80.
+
 ## Run it
 
 `example/` is a folder of the ICM-DEV repository, not a repository of its own. There are two ways to run the loop on it.
