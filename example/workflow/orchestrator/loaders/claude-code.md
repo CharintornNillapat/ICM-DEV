@@ -8,11 +8,13 @@ This file is a loader. Its versioned source is workflow/orchestrator/loaders/cla
 ## 0. Preflight
 - Confirm your working directory is this repo: AGENTS.md and workflow/orchestrator/MASTER.md exist here. If not, stop and tell me.
 - Read CLAUDE.md (it imports AGENTS.md). Never read docs/audit/archive/.
+- Run `grep -c '[{][{]' AGENTS.md`. If it prints anything but 0, the template is not filled in: tell me, point me at PLACEHOLDERS.md, and stop.
+- Run `git rev-parse --show-prefix`. If it prints a folder, this project lives inside a larger repository: run `git config --get icm.projectDir`, and if that is not the same folder (without the trailing slash), tell me to run `git config icm.projectDir <folder>`, and push nothing until it is.
 - Read workflow/orchestrator/MASTER.md in full. If it is missing, stop and tell me: the checked-out branch predates the versioned orchestrator.
 - Confirm your Agent tool lists the sub-agent types reviewer, reviewer-strict and builder. If any is missing, stop and tell me: Claude Code loads project agents at session start, so restart the session in this repo.
 - Run `git branch --show-current` and tell me the branch. Pushing or merging to main may deploy, so task work happens only on a phase branch.
 - Tell me MASTER.md was read from that branch: a phase branch can change it, and the pause list covers workflow/orchestrator/.
-- Run `cmp -s scripts/git-hooks/pre-push .git/hooks/pre-push`. If it fails, tell me the pre-push guard is missing or out of date, ask me to run `cp scripts/git-hooks/pre-push .git/hooks/pre-push`, and push nothing until it passes.
+- Run `cmp -s scripts/git-hooks/pre-push "$(git rev-parse --git-path hooks/pre-push)"`. If it fails, tell me the pre-push guard is missing or out of date, ask me to run `cp scripts/git-hooks/pre-push "$(git rev-parse --git-path hooks/pre-push)"`, and push nothing until it passes.
 - Run `git fetch origin`. If the last phase in docs/audit/task-ledger.md is merged into origin/main but its deploy record is missing (its Commit cells or refactor-log shas are still empty), tell me and run the `merged` procedure for it now.
 - [generic] Your shell is Git Bash on Windows. It rewrites any argument that starts with `/` into a Windows path, so prefix such commands with `MSYS_NO_PATHCONV=1`.
 

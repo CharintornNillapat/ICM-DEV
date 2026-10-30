@@ -34,11 +34,16 @@ you ── task ──> MASTER (orchestrator, writes no code)
 ## Use it
 
 1. Copy these files into your repo: `AGENTS.md`, `CLAUDE.md`, `.claude/`, `workflow/`, `docs/`, `scripts/git-hooks/`, `.gitignore` lines, `.gitattributes`.
-2. Fill every `{{placeholder}}` (`PLACEHOLDERS.md` lists them: `grep -rn '{{' .`).
-3. Install the hook and the loader by hand: `cp scripts/git-hooks/pre-push .git/hooks/pre-push` and copy `workflow/orchestrator/loaders/claude-code.md` to `~/.claude/commands/master.md`.
-4. Start Claude Code in the repo and run `/master`. Then `phase 1: my-first-phase`, then `task: <one line goal>`.
+2. Fill every `{{placeholder}}` (`PLACEHOLDERS.md` lists them). This must print nothing: `grep -rn "[{][{]" . --exclude-dir=.git --exclude=README.md --exclude=PLACEHOLDERS.md`.
+3. Put `main` on your remote first, then install the hook. The hook refuses to create `main`, and after it is installed `main` takes only deploy records, so do `git push -u origin main` once before the hook goes in. Then: `cp scripts/git-hooks/pre-push "$(git rev-parse --git-path hooks/pre-push)"`. If the project is a folder of a larger repository, run `git config icm.projectDir <folder>` as well, so the hook looks for the deploy-record files under that folder.
+4. Install the loader: copy `workflow/orchestrator/loaders/claude-code.md` (your filled copy) to `~/.claude/commands/master.md`.
+5. Start a **new** Claude Code session in the project folder and run `/master`. Claude Code loads `.claude/agents/` when a session starts, so a session that was already open cannot call `reviewer`, `reviewer-strict` or `builder`. Then `phase 1: my-first-phase`, then `task: <one line goal>`.
 
 Needs: Claude Code, `git`, the GitHub CLI `gh` for the release steps, Node 22 or newer for the hook test and the example.
+
+### Permissions
+
+`.claude/settings.json` is read by Claude Code in the project folder. It allows exactly four commands without a prompt (six rules, because the two `gh` forms are listed for both Bash and PowerShell): the push of a phase branch (`ALLOW_GIT_WRITE=1 git push -u origin phase-*`), the push of `main` for the deploy record, `gh pr create --base main --head phase-* ...`, and `gh pr merge ... --auto --merge`. It denies squash, rebase and admin merges, `--no-verify`, a second base or head on `gh pr create`, and the GitHub MCP write tools. Everything else waits on a prompt unless your own settings allow it, including `ALLOW_GIT_WRITE=1 git commit`, `git add`, `git status`, `git diff`, `gh pr view` and `gh api`. The file is not widened for you: adding an allow rule is your call.
 
 ## The example
 
