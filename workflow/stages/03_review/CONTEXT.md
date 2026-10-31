@@ -2,7 +2,7 @@
 
 ## Role and orders
 
-**Agent:** the reviewer (the light or the strict reviewer; `workflow/orchestrator/runtimes.md` names the agent and model behind each role). It writes specs and reviews only; it never edits app code, tests or config (step 6's stash, or its temporary test edit for a test-only task, is the one allowed exception). **Order:** `review <id> (stage file: workflow/stages/03_review/CONTEXT.md)`, sent by the orchestrator. The builder handles `build <id> (stage file: <path>)` and `fix <id> (stage file: <path>)` (stage 02); the reviewer also handles `spec <id>: <description> (stage file: <path>)` (stage 01).
+**Agent:** the reviewer (the light or the strict reviewer; `workflow/orchestrator/runtimes.md` names the agent and model behind each role). It writes specs and reviews only; it never edits app code, tests or config (step 6's last-resort stash, or its temporary test edit for a test-only task, is the one allowed exception; the worktree and the hand-built copy touch no tracked file). **Order:** `review <id> (stage file: workflow/stages/03_review/CONTEXT.md)`, sent by the orchestrator. The builder handles `build <id> (stage file: <path>)` and `fix <id> (stage file: <path>)` (stage 02); the reviewer also handles `spec <id>: <description> (stage file: <path>)` (stage 01).
 
 ## Inputs
 
@@ -15,11 +15,16 @@
 4. **Gates:** run the spec's gate commands yourself and record the exact counts (files, tests, passed, failed, skipped). Do not copy the builder's numbers. Save each full-suite run to `workflow/stages/03_review/output/logs/<id>-<suite>.log`. For the comments-only tier, confirm from the diff that only comment lines changed.
    - **End-to-end:** run each end-to-end gate in its full form once (`{{e2e_cmd}}`). Skip a fast-form gate when a full-form gate covers the same spec files: the builder ran it, and your run covers it. Run any other end-to-end gate as written.
 5. **Parity:** check every row of `AGENTS.md`'s parity map the change touches.
-6. **Tests:** for each new test, confirm it fails without the change. Skip this step when the spec's tests are `none`. When the task changes no non-test file, there is nothing to stash, and the builder's red log alone is not enough: reproduce the red run yourself. Record `git status --porcelain` and `git diff -- <test file>`; make the temporary edit the spec names in the test file; run the test alone and record the failure the spec gives; undo that edit by hand (never `git checkout` or `git restore`, which would drop the task's changes); then show both outputs are identical to the recorded ones, so `git diff` holds only the task's changes. Steps 6.1 to 6.4 then do not apply.
-   1. Record `git status --porcelain`.
-   2. Stash only the non-test changes: `git stash push -- <files>`. Never while end-to-end tests run. A staged deletion matches no path, so stash it through its folder's path. Leave out a file that `git ls-files --eol` shows as `w/lf`: under `core.autocrlf` the pop rewrites it to CRLF. Say in Not verified which files were left out and that no new test depends on them; if a new test does depend on one, record that test's red run as not verified.
-   3. Run the new tests alone and record the failure.
-   4. `git stash pop --index` (it keeps a staged deletion staged), then show `git status --porcelain` is identical to step 6.1.
+6. **Tests:** for each new test, confirm it fails without the change, with the failure the spec gives. Skip this step when the spec's tests are `none`. The builder's red log alone is not enough: reproduce the red run yourself, and check the failure text against the spec's, because a missing module or a syntax error is a red for the wrong reason. Record `git status --porcelain` before and after, and show both are identical. Never `git checkout` or `git restore`, which would drop the task's changes. `HEAD` is the code before the task: only the orchestrator commits, and only after `APPROVED`. Save the failing run to `workflow/stages/03_review/output/logs/<id>-red.log`.
+   When the task changes no non-test file, there is nothing to compare against: record `git diff -- <test file>`; make the temporary edit the spec names in the test file; run the test alone and record the failure the spec gives; undo that edit by hand; then show both outputs are identical to the recorded ones, so `git diff` holds only the task's changes. The methods below then do not apply. Otherwise use the first method that fits, and say in Not verified which one you used and why the earlier ones did not apply.
+   1. **Worktree (default).** `git worktree add --detach workflow/stages/03_review/output/logs/<id>-red HEAD` (delete an older folder of that name first). It checks out the unchanged code inside the ignored logs folder, so imports, path aliases, config files and `node_modules` (found by walking up to the project) resolve as in the project. Copy into it, at the same paths, only the task's new and changed test files and any new fixture they read; a gitignored file the run needs (an `.env.test`, generated code) must be copied too. Run the new tests alone from inside it and record the failure.
+   2. **Hand-built copy (fallback).** When the checkout is too large or slow, or `git worktree` is refused: recreate under `workflow/stages/03_review/output/logs/<id>-red/` the layout of the new test files and of every file they import, directly or not, plus each package, alias or test-runner config file the run reads. Take each non-test file from `git show HEAD:<path>` and each test file as it is now. List the files you placed in the review. A file you miss gives a red for the wrong reason, and a missed alias or config file can resolve to the fixed code in the project and give a false green, so check the failure text against the spec's.
+   3. **Stash (last resort).** Only when the tests cannot run from a copy, for example because they need the project's own running services.
+      1. Record `git status --porcelain`.
+      2. Stash only the non-test changes: `git stash push -- <files>`. Never while end-to-end tests run. A staged deletion matches no path, so stash it through its folder's path. Leave out a file that `git ls-files --eol` shows as `w/lf`: under `core.autocrlf` the pop rewrites it to CRLF. Say in Not verified which files were left out and that no new test depends on them; if a new test does depend on one, record that test's red run as not verified.
+      3. Run the new tests alone and record the failure.
+      4. `git stash pop --index` (it keeps a staged deletion staged), then show `git status --porcelain` is identical to step 6.3.1.
+   After method 1 or 2, clean up as its own step, done whatever the run's result (a failing run is the expected one, so do not stop there): `git worktree remove --force workflow/stages/03_review/output/logs/<id>-red` for the worktree (`--force` because the copied files are untracked), or delete the folder for the hand-built copy. Then show `git worktree list` has one entry again and `git status --porcelain` is identical to the first record. Do not go on with the review until both hold.
    No other edit to code, tests or config.
 
 ## Outputs
@@ -51,7 +56,8 @@ Only `APPROVED` or `CHANGES REQUESTED`. `BLOCKED` is not a verdict: use it when 
 
 ## Shell notes
 
-None.
+- [generic] On Node 22 and newer, `node --test` prints its summary lines as `ℹ tests 9`, `ℹ pass 9` and `ℹ fail 0`, where older Node printed `# tests 9`. A gate that reads the counts matches `(tests|pass|fail) [0-9]+$` and does not anchor on the leading mark.
+- [generic] Test runners such as `node --test` do not read `.gitignore`: a plain run from the project root finds every test file below it, including copies under the ignored `output/logs/` folder. A leftover worktree or hand-built red-run copy there adds its tests, and the red copy's expected failure, to the main run's counts (in a scratch check a leftover worktree turned `tests 3` into `tests 5` and added a failure), so remove it before any full-suite run.
 
 ## STATUS line
 
@@ -60,3 +66,5 @@ End every reply with exactly one line, starting with the task id:
 - `STATUS: <id> | APPROVED | workflow/stages/03_review/output/task-<id>-review.md`
 - `STATUS: <id> | CHANGES REQUESTED | workflow/stages/03_review/output/task-<id>-review.md`
 - `STATUS: <id> | BLOCKED | <the reason>`
+
+The path in the STATUS line, and any file you name in the reply, is relative to the repository root, never absolute.

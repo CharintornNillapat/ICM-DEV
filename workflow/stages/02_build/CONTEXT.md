@@ -62,6 +62,7 @@ When the spec lists `docs/audit/refactor-log.md`, build the phase's entry, or th
 - [generic] In Windows PowerShell 5.1, `>`, `>>` and `Tee-Object` write UTF-16, so never use them for a log.
 - [generic] To save a native command's own UTF-8 bytes from PowerShell, run it through `cmd /c`, which leaves its exit code in `$LASTEXITCODE`: `cmd /c '<command> > workflow\stages\02_build\output\logs\<id>-<suite>.log 2>&1'`. In Git Bash use `tee` and print the command's own exit code: `<command> 2>&1 | tee workflow/stages/02_build/output/logs/<id>-<suite>.log; echo exit=${PIPESTATUS[0]}`.
 - [generic] Use `| Out-File -Encoding utf8 <log>` only for a PowerShell cmdlet's own output (for example `Get-FileHash`): PowerShell decodes piped npm, npx, node or git output in the console code page, which garbles non-ASCII text and symbols, and with `2>&1` it wraps each stderr line in an error record. Set `NO_COLOR` for every logged run, `$env:NO_COLOR='1'` before `cmd /c` in the same PowerShell call or `NO_COLOR=1` before the command in Git Bash: a test runner or bundler can write ANSI color codes into a log, which splits a summary line such as `Tests  N passed` so `grep` misses it.
+- [generic] On Node 22 and newer, `node --test` prints its summary lines as `ℹ tests 9`, `ℹ pass 9` and `ℹ fail 0`, where older Node printed `# tests 9`. A gate that reads the counts matches `(tests|pass|fail) [0-9]+$` and does not anchor on the leading mark.
 
 ## STATUS line
 
@@ -70,3 +71,5 @@ End every reply with exactly one line, starting with the task id:
 - `STATUS: <id> | BUILT | <n> files changed`
 - `STATUS: <id> | FIXED | <n> files changed`
 - `STATUS: <id> | BLOCKED | <reason>`
+
+The path in the STATUS line, and any file you name in the reply, is relative to the repository root, never absolute.
