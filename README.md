@@ -33,12 +33,11 @@ you ── task ──> MASTER (orchestrator, writes no code)
 
 ## Use it
 
-1. Copy these files into your repo: `AGENTS.md`, `CLAUDE.md`, `.claude/`, `workflow/`, `docs/`, `scripts/git-hooks/`, `.gitignore` lines, `.gitattributes`.
+1. Copy these files into your repo, at its root (a project that is a folder of a larger repository is not supported): `AGENTS.md`, `CLAUDE.md`, `.claude/`, `workflow/`, `docs/`, `scripts/git-hooks/`, `.gitignore` lines, `.gitattributes`.
 2. Fill every `{{placeholder}}` (`PLACEHOLDERS.md` lists them). This must print nothing: `grep -rn "[{][{]" . --exclude-dir=.git --exclude=README.md --exclude=PLACEHOLDERS.md`.
-3. Put `main` on your remote first, then install the hook. The hook refuses to create `main`, and after it is installed `main` takes only deploy records, so do `git push -u origin main` once before the hook goes in. Then: `cp scripts/git-hooks/pre-push "$(git rev-parse --git-path hooks/pre-push)"`. If the project is a folder of a larger repository, run `git config icm.projectDir <folder>` as well, so the hook looks for the deploy-record files under that folder.
-4. Start a **new** Claude Code session in the project folder and run `/master`. It is the project command `.claude/commands/master.md`, so there is nothing to install; if an earlier version of this template told you to copy a loader to `~/.claude/commands/master.md`, delete that file. Claude Code loads `.claude/agents/` when a session starts, so a session that was already open cannot call `reviewer`, `reviewer-strict` or `builder`. Then `phase 1: my-first-phase`, then `task: <one line goal>`.
+3. Put `main` on your remote first, then install the hook. The hook refuses to create `main`, and after it is installed `main` takes only deploy records, so do `git push -u origin main` once before the hook goes in. Then: `cp scripts/git-hooks/pre-push "$(git rev-parse --git-path hooks/pre-push)"`.4. Start a **new** Claude Code session in the project folder and run `/master`. It is the project command `.claude/commands/master.md`, so there is nothing to install; if an earlier version of this template told you to copy a loader to `~/.claude/commands/master.md`, delete that file. Claude Code loads `.claude/agents/` when a session starts, so a session that was already open cannot call `reviewer`, `reviewer-strict` or `builder`. Then `phase 1: my-first-phase`, then `task: <one line goal>`.
 
-Needs: Claude Code, `git`, the GitHub CLI `gh` for the release steps, Node 22 or newer for the hook test and the example.
+Needs: Claude Code, `git`, the GitHub CLI `gh` for the release steps, Node 22 or newer for the hook test.
 
 ### Permissions
 
@@ -46,7 +45,7 @@ Needs: Claude Code, `git`, the GitHub CLI `gh` for the release steps, Node 22 or
 
 ## The example
 
-[`example/`](example/) is the same template with every placeholder filled in for a tiny project (a zero-dependency Node `slugify` module with `node --test`). It carries one real task, `T001`, run through spec, build and review: read `example/workflow/stages/*/output/` to see what each stage wrote. See [`example/README.md`](example/README.md) for how that run was made, and what was and was not exercised.
+The worked example (Slugify, a tiny Node module with one task run through spec, build and review) is moving to its own repository, `ICM-DEV-example`, not published yet. Until then it is in this repository's history: `git archive 439e4b9 example/`.
 
 ## Layout
 

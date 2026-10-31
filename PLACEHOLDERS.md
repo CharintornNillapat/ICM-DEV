@@ -1,6 +1,6 @@
 # Placeholders
 
-Every `{{name}}` in the template files. Fill them by hand, then run `grep -rn "[{][{]" . --exclude-dir=.git --exclude=README.md --exclude=PLACEHOLDERS.md` and expect no output. `example/` shows each one filled in for a real project.
+Every `{{name}}` in the template files. Fill them by hand, then run `grep -rn "[{][{]" . --exclude-dir=.git --exclude=README.md --exclude=PLACEHOLDERS.md` and expect no output. The example repository `ICM-DEV-example` (not published yet; see the README) shows each one filled in for a real project.
 
 Not placeholders: `<id>`, `NNN`, `<slug>` and `gh api repos/{owner}/{repo}` are literal text for the agents or for `gh`. The branch name `main`, the role names `reviewer`, `reviewer-strict`, `builder` and the command `/master` are fixed; rename them everywhere with a search if you must.
 

@@ -214,37 +214,10 @@ describe('inside a Claude Code session', () => {
   });
 });
 
-describe('a project that is a folder of a larger repository', () => {
-  test('refuses a deploy record under the folder while icm.projectDir is unset', () => {
+describe('a project that is a folder of a larger repository is not supported', () => {
+  test('ignores icm.projectDir: a deploy record under a folder stays refused', () => {
+    run(['config', 'icm.projectDir', 'example']);
     commit(NESTED_FILES, DEPLOY);
-    expectRefused(push(['origin', 'main']));
-    assert.equal(remoteRef('main'), seed);
-  });
-
-  test('accepts a deploy record under the folder once icm.projectDir names it', () => {
-    run(['config', 'icm.projectDir', 'example']);
-    const head = commit(NESTED_FILES, DEPLOY);
-    assert.equal(push(['origin', 'main']).status, 0);
-    assert.equal(remoteRef('main'), head);
-  });
-
-  test('accepts the folder name with a trailing slash', () => {
-    run(['config', 'icm.projectDir', 'example/']);
-    const head = commit(NESTED_FILES, DEPLOY);
-    assert.equal(push(['origin', 'main']).status, 0);
-    assert.equal(remoteRef('main'), head);
-  });
-
-  test('refuses a deploy record at the repository root once icm.projectDir is set', () => {
-    run(['config', 'icm.projectDir', 'example']);
-    commit(['docs/audit/task-ledger.md'], DEPLOY);
-    expectRefused(push(['origin', 'main']));
-    assert.equal(remoteRef('main'), seed);
-  });
-
-  test('still refuses a code file under the folder', () => {
-    run(['config', 'icm.projectDir', 'example']);
-    commit(['example/src/app.js'], DEPLOY);
     expectRefused(push(['origin', 'main']));
     assert.equal(remoteRef('main'), seed);
   });

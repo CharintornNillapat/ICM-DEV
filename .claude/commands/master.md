@@ -9,7 +9,7 @@ This file is a loader. It is the project command .claude/commands/master.md, rea
 - Confirm your working directory is this repo: AGENTS.md and workflow/orchestrator/MASTER.md exist here. If not, stop and tell me.
 - Read CLAUDE.md (it imports AGENTS.md). Never read docs/audit/archive/.
 - Run `grep -c '[{][{]' AGENTS.md`. If it prints anything but 0, the template is not filled in: tell me, point me at PLACEHOLDERS.md, and stop.
-- Run `git rev-parse --show-prefix`. If it prints a folder, this project lives inside a larger repository: run `git config --get icm.projectDir`, and if that is not the same folder (without the trailing slash), tell me to run `git config icm.projectDir <folder>`, and push nothing until it is.
+- Run `git rev-parse --show-prefix`. If it prints anything, the project is a folder of a larger repository; this template needs the project at the repository root, because the pre-push hook looks for the deploy-record files there. Tell me and stop.
 - Read workflow/orchestrator/MASTER.md in full. If it is missing, stop and tell me: the checked-out branch predates the versioned orchestrator.
 - Confirm your Agent tool lists the sub-agent types reviewer, reviewer-strict and builder. If any is missing, stop and tell me: Claude Code loads project agents at session start, so restart the session in this repo.
 - Run `git branch --show-current` and tell me the branch. Pushing or merging to main may deploy, so task work happens only on a phase branch.

@@ -11,18 +11,13 @@
 #    whose subject is "docs(deploy): ... [skip ci]" and which only modify
 #    docs/audit/refactor-log.md, docs/audit/task-ledger.md or an existing
 #    docs/audit/decisions/NNNN-*.md.
-# When the project is a folder of a larger repository, run
-#    git config icm.projectDir <folder>
-# once; the allow-list in rule 3 then sits under that folder.
+# The paths are relative to the repository root: the project is the repository.
 if [ "${CLAUDECODE:-}" = "1" ] && [ "${ALLOW_GIT_WRITE:-}" != "1" ]; then
   echo "Commits and pushes inside a Claude Code session go only through the orchestrator." >&2
   exit 1
 fi
 
-PROJECT_DIR=$(git config --get icm.projectDir 2>/dev/null)
-PREFIX=
-[ -n "$PROJECT_DIR" ] && PREFIX="$(printf '%s/' "${PROJECT_DIR%/}" | sed 's/\./\\./g')"
-ALLOWED="^M[[:space:]]${PREFIX}docs/audit/(refactor-log|task-ledger)\\.md\$|^M[[:space:]]${PREFIX}docs/audit/decisions/[0-9]{4}-[^/]+\\.md\$"
+ALLOWED='^M[[:space:]]docs/audit/(refactor-log|task-ledger)\.md$|^M[[:space:]]docs/audit/decisions/[0-9]{4}-[^/]+\.md$'
 
 fail() {
   echo "pre-push guard: $1" >&2
