@@ -22,7 +22,7 @@ The working memory of the project: what is planned, what shipped, and why each d
 
 ## Update discipline
 
-- **Who writes what.** The reviewer's spec is the plan. An ADR the task needs is a spec target the builder writes first, before any code. The builder keeps the task's ledger row. `refactor-log.md` is written by the task that ships the phase.
+- **Who writes what.** The reviewer's spec is the plan. An ADR the task needs is a spec target the builder writes first, before any code. The builder keeps the task's ledger row. `refactor-log.md` and the ADR's Status line are written by the task that ships the phase; the deploy record only fills `<sha>` placeholders, results and Backlog rows.
 - **`task-ledger.md` is the only file edited by every task mid-phase.** Flip a row to `in-progress` when started; fill `Gate result` when it lands and leave `Commit` empty. The owner-approved deploy record fills every task's `Commit` cell once per phase, after the merge. The row goes under the section for the phase in the branch name, created from the template if missing.
 - **Every `refactor-log.md` entry has `Surprises` and `Deliberately not done`,** even when they say "none".
 - **Keep each live file short.** Past about 150 lines, move finished phases into a new file in `archive/`.

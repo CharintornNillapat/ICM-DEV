@@ -20,7 +20,7 @@ Branch `phase-NNN-<slug>`, cut from `main` at `<sha>`. No production touch point
 
 ## Backlog
 
-Items not yet in a phase. A spec that names a row sets its Status to `done in Phase NNN (<id>)`.
+Items not yet in a phase, numbered `B001`, `B002` and so on. The deploy record adds a row for each `[follow-up]` note a review left open. A spec that names a row sets its Status to `done in Phase NNN (<id>)`.
 
 | # | Item | Status |
 |---|---|---|

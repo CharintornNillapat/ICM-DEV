@@ -38,7 +38,7 @@ One file: `workflow/stages/01_spec/output/task-<id>-spec.md`. Nothing else. The 
 1. **Goal:** one or two sentences, in the owner's terms.
 2. **Target files:** the exact allowlist of files the builder may change, one path per line.
    - If the task needs an ADR, list `docs/audit/decisions/NNNN-<slug>.md` with the next free number; the builder writes it first, before any code.
-   - If the task ships the phase, list `docs/audit/refactor-log.md`.
+   - If the task ships the phase, list `docs/audit/refactor-log.md` and the phase's ADR. Give the ADR's new Status line as an exact-text edit, in its own fenced block: ``Accepted. Implemented in Phase NNN (T001 to T003): code `<sha>`, merged `<sha>`.`` It keeps both `<sha>` placeholders; the deploy record fills them. An ADR that spans phases stays `Accepted. To be implemented in Phase NNN (Txxx)`, naming the next phase that remains, until the shipping task of its last phase.
    - Bookkeeping files are always allowed and need not be listed (see stage 02).
 3. **Context to read:** which `docs/contexts/*.md` files the builder must read, and why, or "none" for a comments-only or docs-only task.
 4. **Current behaviour:** what the code does today, each claim with `file:line`.
