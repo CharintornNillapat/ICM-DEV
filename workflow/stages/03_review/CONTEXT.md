@@ -58,7 +58,7 @@ Only `APPROVED` or `CHANGES REQUESTED`. `BLOCKED` is not a verdict: use it when 
 
 - [generic] On Node 22 and newer, `node --test` prints its summary lines as `ℹ tests 9`, `ℹ pass 9` and `ℹ fail 0`, where older Node printed `# tests 9`. A gate that reads the counts matches `(tests|pass|fail) [0-9]+$` and does not anchor on the leading mark.
 - [generic] Test runners such as `node --test` do not read `.gitignore`: a plain run from the project root finds every test file below it, including copies under the ignored `output/logs/` folder. A leftover worktree or hand-built red-run copy there adds its tests, and the red copy's expected failure, to the main run's counts (in a scratch check a leftover worktree turned `tests 3` into `tests 5` and added a failure), so remove it before any full-suite run.
-- [generic] Run every command from the repository root with no `cd <dir> &&` prefix: the prefix makes the command match no permission rule and prompts. Pass a path as an argument instead.
+- [generic] Run every command from the repository root with no `cd <dir> &&` prefix: the prefix makes the command match no permission rule and prompts. Pass a path as an argument instead. The one exception is the stage 03 red run in its worktree, which runs from inside that worktree (cd into it), because a test runner may read its config from the working directory.
 - [generic] Change a file with the Edit or Write tool, never with a node script or a heredoc: both prompt, and a heredoc can halve a doubled backslash. When a command needs an em dash, write it as `String.fromCharCode(8212)`.
 
 ## STATUS line

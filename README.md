@@ -52,7 +52,7 @@ Run the loop in **auto mode**. Since Claude Code v2.1.283 it is the starting mod
 
 What a run in auto mode showed (Claude Code v2.1.318, Windows, Git Bash):
 
-- Deny rules block in every mode: twelve denied forms were refused with no prompt and nothing ran. A blocked call leaves no entry under `/permissions` > Recently blocked.
+- Deny rules block in every mode: twelve denied forms were refused with no prompt and nothing ran. A deny-rule block leaves no entry under `/permissions` > Recently blocked; a classifier block does (per the permission-modes docs).
 - Ask rules still prompt in auto mode. The prompt for `git rebase` read "Ask rule Bash(git rebase:*) overrides auto mode for this command".
 - `gh pr merge --auto --merge` ran with no prompt. The other three allowed forms were checked in manual mode only, and the PowerShell rules were not exercised.
 - Everything else is the classifier's call. In the run, `node -e` and two dry-run pushes ran with no prompt. A command you typed in full counts as approved, so the run says little about a command the model chooses itself.

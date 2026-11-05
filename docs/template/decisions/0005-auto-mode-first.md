@@ -19,7 +19,7 @@ Proof run 3 measured the loop in manual mode (about 40 permission prompts per ta
 ## Alternatives
 
 - **Keep per-tool deny rules for both prefixes (rejected).** It misses every tool a later server version adds.
-- **Keep manual mode primary (rejected).** The prompts it adds are on commands the rules already classify.
+- **Keep manual mode primary (rejected).** In proof run 3 all 86 manual-mode prompts were approved without review, so they gave no oversight; the guards that held in both modes are the deny rules and the pre-push hook. The owner runs auto mode for all real work.
 - **Delete ADRs 0002 to 0004 (rejected).** They record why the template is shaped as it is.
 
 ## Consequences
