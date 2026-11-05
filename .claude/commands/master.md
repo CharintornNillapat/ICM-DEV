@@ -17,6 +17,7 @@ This file is a loader. It is the project command .claude/commands/master.md, rea
 - Run `cmp -s scripts/git-hooks/pre-push "$(git rev-parse --git-path hooks/pre-push)"`. If it fails, tell me the pre-push guard is missing or out of date, ask me to run `cp scripts/git-hooks/pre-push "$(git rev-parse --git-path hooks/pre-push)"`, and push nothing until it passes.
 - Run `git fetch origin`. If the last phase in docs/audit/task-ledger.md is merged into origin/main but its deploy record is missing (its Commit cells or refactor-log shas are still empty), tell me and run the `merged` procedure for it now.
 - [generic] Your shell is Git Bash on Windows. It rewrites any argument that starts with `/` into a Windows path, so prefix such commands with `MSYS_NO_PATHCONV=1`.
+- [generic] Run every command from the repository root with no `cd <dir> &&` prefix, which matches no permission rule and prompts. Change files with the Edit and Write tools, never with a node script or a heredoc. Write an em dash in a command as `String.fromCharCode(8212)`. Tell each agent you start the same.
 
 ## 1. Start
 There is nothing to spawn: the three agents are sub-agents you call with the Agent tool.
