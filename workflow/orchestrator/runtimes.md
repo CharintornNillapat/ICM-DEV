@@ -33,7 +33,7 @@ What stops a wrong command beyond the agents' own instructions.
 | Guard | What it does |
 |---|---|
 | Pre-push hook `.git/hooks/pre-push`, a byte copy of `scripts/git-hooks/pre-push` | Runs on every push. Inside a Claude Code session (`CLAUDECODE=1`) it refuses every push unless `ALLOW_GIT_WRITE=1` is set on that command, and refuses deleting or rewinding any remote branch. Everywhere it lets `main` take only fast-forward, single-parent `docs(deploy): ... [skip ci]` commits that touch the deploy-record files. The preflight compares the copy with `cmp -s` and pushes nothing while it differs. Never `--no-verify` |
-| Permission rules in `.claude/settings.json` | Allow the three push and PR forms the orchestrator uses and the auto-merge call; ask on `git merge`, `git rebase` and PowerShell pushes; deny squash, rebase and admin merges, `--no-verify`, a second base or head, another repository, and the GitHub MCP write tools. Rules can match flags, not only a command name |
+| Permission rules in `.claude/settings.json` | Allow the three push and PR forms the orchestrator uses and the auto-merge call; ask on `git merge`, `git rebase` and PowerShell pushes; deny squash, rebase and admin merges, `--no-verify`, a second base or head, another repository, and every tool of the GitHub MCP servers `github` and `plugin_github_github` (denied by server name; add yours if its name differs). Rules can match flags, not only a command name |
 
 ## Other runtimes
 

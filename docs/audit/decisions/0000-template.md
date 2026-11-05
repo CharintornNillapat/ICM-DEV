@@ -1,6 +1,6 @@
 # NNNN: <the decision, in a few words>
 
-**Status:** Proposed | Accepted | Superseded by NNNN. To be implemented in Phase NNN (T001). The task that ships the phase changes the last sentence to ``Implemented in Phase NNN (T001 to T003): code `<sha>`, merged `<sha>`.``; the deploy record fills the shas. An ADR that spans phases keeps `To be implemented in Phase NNN (Txxx)`, naming the next phase that remains, until its last phase ships.
+**Status:** Proposed | Accepted | Superseded by NNNN | Superseded in part by NNNN (Dx). A new ADR that replaces any decision of an older ADR changes only that older ADR's Status line, to `Superseded in part by NNNN (Dx)`, and leaves the rest of it as written. To be implemented in Phase NNN (T001). The task that ships the phase changes the last sentence to ``Implemented in Phase NNN (T001 to T003): code `<sha>`, merged `<sha>`.``; the deploy record fills the shas. An ADR that spans phases keeps `To be implemented in Phase NNN (Txxx)`, naming the next phase that remains, until its last phase ships.
 
 **Date:** YYYY-MM-DD
 
