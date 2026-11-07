@@ -10,7 +10,7 @@ ADR 0005 (D4) says a new ADR that replaces a decision of an older ADR replaces t
 
 ## Decision
 
-- **D1: The marker replaces only the leading `Accepted.`** and the rest of the Status line stays. Partial supersession: ``Superseded in part by 0115 (D3). Implemented in Phase 158 (T827): code `a8c6a0b`, merged `160c4b7`.`` Full supersession uses `Superseded by NNNN.` in the same position.
+- **D1: The marker replaces only the leading `Accepted.`** and the rest of the Status line stays. Partial supersession: ``Superseded in part by 0012 (D3). Implemented in Phase 004 (T010): code `abc1234`, merged `def5678`.`` Full supersession uses `Superseded by NNNN.` in the same position.
 - **D2: Only the Status line of the older ADR changes.** Stage 03 still checks that `git diff -- <older ADR>` shows that one line, and now also that the text after the marker is unchanged.
 - **D3: This changes ADR 0005's D4.** The rule's text is updated in `AGENTS.md`, the stage 01 and stage 03 contracts and `docs/audit/decisions/0000-template.md`. ADR 0005's body stays as written; its Status line carries the new marker form.
 
