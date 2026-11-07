@@ -1,6 +1,6 @@
 # 0005: auto mode is the primary mode; GitHub MCP is denied by server; template ADRs move out of the way
 
-**Status:** Accepted.
+**Status:** Superseded in part by 0006 (D1).
 
 **Date:** 2026-11-05
 
