@@ -1,6 +1,6 @@
 # 0006: the supersession marker replaces only the leading "Accepted." and keeps the implementation record
 
-**Status:** Accepted.
+**Status:** Superseded in part by 0007 (D1).
 
 **Date:** 2026-11-07
 

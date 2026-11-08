@@ -1,6 +1,6 @@
 # 0004: the shipping task sets the ADR Status; the deploy record only fills shas
 
-**Status:** Accepted.
+**Status:** Superseded in part by 0007 (D2).
 
 **Date:** 2026-11-01
 
